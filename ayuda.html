@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Encuestas</title>
+	<style>
+		body { display: flex; flex-direction: column;min-height: 100vh;  font-family: sans-serif; margin: 0; }
+		.page-container {flex-grow: 1;}
+		nav { background-color: #686b67; padding: 10px; }
+		nav a { margin-right: 10px; text-decoration-style: solid; color: #686b67; }
+		section { padding: 20px; }
+		footer { background-color: #aaaca9; color: white; text-align: center;padding:10px; }
+
+
+	</style>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+
+	<div class="page-container">
+	<nav>
+		<a href="index.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;">¿Que es la EMG?</a>
+			<a href="home.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;" >Tu EMG</a>
+            <a href="formulario.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;">Cuestionario</a>
+             <a href="ayuda.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;">Ayuda</a>
+	</nav>
+
+<section id="contacto" class="container mt-5">
+    <h2>¿Tienes alguna pregunta?</h2>
+    <form action="https://formspree.io/f/xqaqbqqv" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Tu correo electronico:<input type="email" class="form-control" name="email"></label>
+        </div>
+        <div class="form-group">
+            <label>
+    Your file:
+    <input type="file" typename="upload">
+  </label>
+            
+            <input type="email" class="form-control" id="email" required placeholder="Tu correo electronico">
+        </div>
+        <div class="form-group">
+            <label for="mensaje">Mensaje:</label>
+            <textarea class="form-control" id="mensaje" rows="4" required placeholder="Tu mensaje"></textarea>
+        </div>
+        <button type="submit" >Enviar Mensaje</button>
+
+       
+  <label>
+    Your email:
+    <input type="email" name="email">
+  </label>
+  <label>
+    Your file:
+    <input type="file" name="upload">
+  </label>
+  <button type="submit">Send</button>
+</form>
+</form>
+</section>
+
+</body>
+</html>
