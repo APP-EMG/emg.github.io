@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Formulario</title>
+    
+	<style>
+		body { display: flex; flex-direction: column;min-height: 100vh;  font-family: sans-serif; margin: 0; }
+		.page-container {flex-grow: 1;}
+		nav { background-color: #686b67; padding: 10px; }
+		nav a { margin-right: 10px; text-decoration-style: solid; color: #686b67; }
+
+        .dropdown {position: relative;}
+        .menu-button { background: none; color: white; border: none; padding: 10px 15px; font-family: Georgia, sans-serif; font-size: 18px; cursor: pointer; display: block;width: 100%; text-align: left; }
+        .dropdown-content { display: none;position: absolute; background-color: #757574; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,5,20); z-index: 5;}
+        .dropdown-content a {color: #333; padding: 12px 16px; text-decoration: none; display: block;font-family: Georgia, sans-serif; font-size: 18px; text-align: left;}
+        .dropdown-content a:hover{ background-color: #5a5a59; }
+        .dropdown:hover .dropdown-content { display: block; }
+        section { padding: 20px; }
+        footer { background-color: #333; color: white; text-align: center;padding:10px; }
+       
+      
+
+
+        @media (min-width: 9000px) {
+        .menu-button { display: none;}
+        nav { display: flex; justify-content: flex-start; }
+        nav a { margin-right: 10px; text-decoration-style: solid; color: white }
+        .dropdown { position: static; }
+        .dropdown-content { display: static; }
+          .dropdown-content a {
+            color: white; 
+            padding: 10px 0; 
+            margin-right: 10px; 
+            display: block; 
+        }
+        .dropdown-content a:hover {
+            background-color: transparent; 
+            color: #a7a7a7; 
+
+        }
+		
+
+
+	</style>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+
+	<div class="page-container">
+	<nav>
+         <div class="dropdown">
+            <button class="menu-button" arial-label="Menu" >Menu</button>
+            <div class="dropdown-content">
+                <a href="index.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;">¿Que es la EMG?</a>
+            <a href="home.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;" >Tu EMG</a>
+            <a href="formulario.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;">Cuestionario</a>
+            <a href="ayuda.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;">Ayuda</a>
+            </div>
+        </div>
+		
+	</nav>
+ 
+
+<section id="quiz" class="container mt-5">
+    <h2>Pon a prueba tus conocimientos sobre la EMG</h2>
+    <div id="pregunta-1" class="card">
+        <div class="card-body">
+            <h5>Pregunta 1: ¿Qué mide principalmente la EMG?</h5>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta1" id="respuesta1a" value="incorrecto">
+                <label class="form-check-label" for="respueta1a">La presión arterial</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta1" id="respuesta1b" value="correcto">
+                <label class="form-check-label" for="respueta1b">La actividad eléctrica de los músculos</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta1" id="respuesta1c" value="incorrecto">
+                <label class="form-check-label" for="respueta1c">Los Niveles de glucosa en sangre</label>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary mt-3" onclick="mostrarResultado()">Ver Resultado</button>
+    <div id="resultado-quiz" class="mt-3" style="display:none;"></div>
+
+    <script>
+        function mostrarResultado() {
+            let respuesta1 = document.querySelector('input[name="pregunta1"]:checked');
+            let resultadoDiv = document.getElementById('resultado-quiz')
+
+            if (respuesta1){
+                if (respuesta1.value === 'correcto') {
+                    resultadoDiv.innerHTML = '<div class="alert alert-success">¡Correcto!</div>';
+                } else {
+                    resultadoDiv.innerHTML = '<div class="alert alert-danger">Incorrecto. La EMG mide la actividad eléctrica de los músculos.</div>';
+                }
+                resultadoDiv.style.display = 'block';
+            } else {
+                resultadoDiv.innerHTML = '<div class="alert alert-warning">Por favor, selecciona una respuesta.</div>';
+                resultadoDiv.style.display = 'block';
+            }
+        }
+    </script>
+</section> 
+</div>
+
+    <script >
+    const dropdownMenu = document.querySelector('.dropdown');
+    const dropdownContent = document.querySelector('.dropdown-content');
+    let timeoutId;
+
+    if (dropdownMenu && dropdownContent) { dropdownMenu.addEventListener('mouseenter' , () =>{clearTimeout(timeoutId); dropdownContent.style.display = 'block' ;})
+    dropdownMenu.addEventListener('mouseleave' , () => { timeoutId = setTimeout(() => {dropdownContent.style.display = 'none';}, 200);});
+    dropdownContent.addEventListener('mouseenter' , () => {clearTimeout(timeoutId);})
+    dropdownContent.addEventListener('mouseleave' , () => {timeoutId = setTimeout(() =>{ dropdownContent.style.dispaly = 'none';}, 200);});
+}
+
+</script>
+<footer>
+        <p>© 2025 Formulario</p>
+          Maria Jose Cardenas Camargo, Josue Israel Plazas Carreño, Rafel Antonio Vargar Fonseca, Wilmer Esteban Vargar Fonseca<br>
+         © 2025 Comparador EMG. Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>
