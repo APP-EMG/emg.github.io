@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Comparador de Gráficas EMG con Condiciones</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+	<style>
+
+	 	body { display: flex; flex-direction: column;min-height: 100vh;  font-family: sans-serif; margin: 0; }
+		.page-container {flex-grow: 1;}
+		nav { background-color: #686b67; padding: 10px; }
+		 .dropdown {position: relative;}
+		.menu-button { background: none; color: white; border: none; padding: 10px 15px; font-family: Georgia, sans-serif; font-size: 18px; cursor: pointer; display: block;width: 100%; text-align: left; }
+        .dropdown-content { display: none;position: absolute; background-color: #757574; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,5,20); z-index: 20;}
+        .dropdown-content a {color: #333; padding: 12px 16px; text-decoration: none; display: block;font-family: Georgia, sans-serif; font-size: 18px; text-align: left;}
+        .dropdown-content a:hover{ background-color: #5a5a59; }
+        .dropdown:hover .dropdown-content { display: block; }
+		nav a { margin-right: 10px; color:white;font-family: georgia, sans-serif; font-size:18px; text-decoration: none;}
+		nav a:hover {text-decoration: underline;}
+		section { padding: 20px; }
+		footer { background-color: #333; color: white; text-align: center;padding:10px; }
+
+		
+
+	 	.main-content {
+	 		padding: 15px;
+	 		width: 100%;
+	 		box-sizing: border-box;
+	 		display: flex;
+	 		flex-direction: column;
+	 		align-items: center;
+	 		text-align: center;
+
+	 	}
+
+	 	textarea {
+	 		margin: 15px; 
+	 		padding: 10px;
+	 		width: 95%; 
+	 		height: 120px; 
+	 		border: 1px solid #ccc black;
+	 		border-radius: 8px; 
+	 		font-family: sans-serif;
+	 		font-size: 14px; 
+	 	}
+
+	 	/* Ajustes para el botón */
+	 	
+
+	 	.buttons-container {display: flex; justify-content: center;width: 100% margin-bottom:15px;}
+	 
+	 	.buttons-container button {margin: 0 10px;}
+	 	
+
+	 	button {
+	 		padding: 8px 15px; 
+	 		margin-bottom: 15px; 
+	 		cursor: pointer;
+	 		font-size: 16px; 
+
+	 	}
+
+	 	.chart-container {
+	 		width: 95%; 
+	 		height: auto; 
+	 		min-height: 300px; 
+	 		margin: 10px auto; 
+	 		border: 1px solid #ccc ;
+	 		border-radius: 8px; 
+	 	}
+
+	 	#comparisonResult {
+	 		margin-top: 15px ; 
+	 		font-weight: bold;
+	 		text-align: center;
+	 		font-size: 16px; 
+	 	}
+
+	 	.info-box{
+	 		margin-top: 15px; 
+	 		padding: 10px; 
+	 		border: 1px solid #eee;
+	 		background-color: #f9f9f9;
+	 		width: 95%; 
+	 		text-align: left;
+	 		font-size: 14px; 
+	 	}
+
+	 	 .info-box h3 {
+	 	 	margin-top: 0;
+	 	 	font-size: 18px;
+	 	 }
+
+	 	 footer {
+	 	 	background-color: #333;
+	 	 	color: white;
+	 	 	padding: 15px; 
+	 	 	width: 100%;
+	 	 	text-align: center;
+	 	 	bottom: 0;
+	 	 	box-sizing: border-box;
+	 	 	font-size: 12px; 
+	 	 }
+
+
+	 	/* Estilos para la ventana de las gráficas de referencia */
+	 	.reference-window {
+	 		width: 95%; 
+	 		margin: 20px auto; 
+	 		padding: 15px; 
+	 		border: 1px solid #ccc;
+	 		border-radius: 8px; 
+	 		background-color: #f2fdef;
+	 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+	 		display: flex;
+	 		flex-wrap: wrap;
+	 		justify-content: space-around;
+	 	}
+
+	 	.reference-window.hidden {
+	 		display: none;
+	 	}
+
+	 	.reference-window .chart-container {
+	 		width: 95%; 
+	 		margin-bottom: 15px; 
+	 		border: 1px solid #ddd;
+	 		border-radius: 5px;
+	 		box-sizing: border-box;
+	 		background-color: white;
+	 	}
+
+	 	 @media (min-width: 9000px) {
+        .menu-button { display: none;}
+        nav { display: flex; justify-content: flex-start; }
+        nav a { margin-right: 10px; text-decoration-style: solid; color: white }
+        .dropdown { position: static; }
+        .dropdown-content { display: static; }
+          .dropdown-content a {
+            color: white; 
+            padding: 10px 0; 
+            margin-right: 10px; 
+            display: block; 
+        }
+        .dropdown-content a:hover {
+            background-color: transparent; 
+            color: #a7a7a7; 
+
+        }
+
+	</style>
+
+</head>
+<body>
+<div class="page-container">
+	<nav>
+		 
+        <div class="dropdown">
+            <button class="menu-button" arial-label="Menu" >Menu</button>
+            <div class="dropdown-content">
+                <a href="index.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;">¿Que es la EMG?</a>
+            <a href="home.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;" >Tu EMG</a>
+            <a href="formulario.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;">Cuestionario</a>
+            <a href="ayuda.html" style="font-family: Georgia, sans-serif; font-size: 18px; color: white;">Ayuda</a>
+            </div>
+        </div>
+		
+	</nav>
+<div>
+<div class="main-content">
+	<h2>Tu Grafica EMG</h2>
+</div>
+	<textarea id="userDataInput" placeholder="Ingresa tus datos aqui(Tiempo y Valor, separados por un espacio):&#10;ejemplo:&#10; 0 0.1&#10;0.1 0.2&#10;0. 2 -0.1"></textarea>
+	<div class="buttons-container">
+	<button id="generateChartButton" >Generar y Comparar Grafica EMG</button>
+	<button id="clearDataButton">Limpiar Datos</button>
+	</div>
+
+	<div class="chart-container">
+		<canvas id=userChart></canvas>
+	</div>
+
+	<h2><div style="text-align: center;"> Graficos de Referencia </h2>
+
+	<div class="reference-window">
+
+	<div id="comparisonResult"></div>
+
+	<div class="info-box">
+		<h3>Posible Interpretacion</h3>
+		<div id="conditionInfo"></div>
+	</div>
+
+	<div class="chart-container">
+		<canvas id="emgNormalChart"></canvas>
+	</div>
+
+	<div class="chart-container">
+		<canvas id="emgCarpalTunnelChart"></canvas>
+	</div>
+
+	<div class="chart-container">
+		<canvas id="emgMyopathyChart"></canvas>
+	</div>
+
+	<div class="chart-container">
+		<canvas id="emgNeuropathyChart"></canvas>
+	</div>
+
+	<div class="chart-container">
+		<canvas id="emgFasciculationChart"></canvas>
+	</div>
+
+	<div class="chart-container">
+		<canvas id="emgFibrillationChart"></canvas>
+	</div>
+
+	<div class="chart-container">
+		<canvas id="emgMyotoniaChart"></canvas>
+	</div>
+
+	<div id="comparisonResult"></div>
+
+
+</div>
+</div>
+
+ <footer>
+        <p>Institucion Educativa Tecnica de Firavitoba<br>
+        	Autores:<br>
+        Maria Jose Cardenas Camargo, Josue Israel Plazas Carreño, Rafel Antonio Vargar Fonseca, Wilmer Esteban Vargar Fonseca<br>
+         © 2025 Comparador EMG. Todos los derechos reservados.</p>
+            </footer>
+
+	<script>
+
+		document.addEventListener('DOMContentLoaded', function() {
+		const userDataInput = document.getElementById('userDataInput');
+		const generateChartButton = document.getElementById('generateChartButton');
+		const clearDataButton = document.getElementById('clearDataButton');
+		const userChartCanvas = document.getElementById('userChart').getContext('2d');console.log("userChartCanvas:", userChartCanvas);
+		const emgNormalChartCanvas = document.getElementById('emgNormalChart').getContext('2d');console.log("userChartCanvas:", userChartCanvas);
+		const emgMyopathyChartCanvas = document.getElementById('emgMyopathyChart').getContext('2d');console.log("userChartCanvas:", userChartCanvas);
+		const emgNeuropathyChartCanvas = document.getElementById('emgNeuropathyChart').getContext('2d');console.log("userChartCanvas:", userChartCanvas);
+		const emgFasciculationChartCanvas = document.getElementById('emgFasciculationChart').getContext('2d');console.log("userChartCanvas:", userChartCanvas);
+		const emgFibrillationChartCanvas = document.getElementById('emgFibrillationChart').getContext('2d');console.log("userChartCanvas:", userChartCanvas);
+		const emgMyotoniaChartCanvas = document.getElementById('emgMyotoniaChart').getContext('2d');console.log("userChartCanvas:", userChartCanvas);
+		const emgCarpalTunnelChartCanvas = document.getElementById('emgCarpalTunnelChart').getContext('2d');console.log("userChartCanvas:", userChartCanvas);
+		const comparisonResultDiv = document.getElementById('comparisonResult')
+		const conditionInfoDiv = document.getElementById('conditionInfo');
+
+		
+ 
+		 let userChart;
+		 let emgNormalChart;
+		 let emgMyopathyChart;
+		 let emgNeuropathyChart;
+		 let emgFasciculationChart;
+		 let emgFibrillationChart;
+		 let emgMyotoniaChart;
+		 let emgCarpalTunnelChart;
+
+
+		 function generateEMGData(baselineNoise = 0.1, spikes = [], numPoints = 50, timeStep = 0.02) {
+		 	return Array.from({ length : numPoints },(i) =>{
+		 		let value =(Math.random() - 0.5) * baselineNoise;
+		 		spikes.forEach(spike => {
+		 			const time = i * timeStep;
+		 			const diff = Math.abs(time - spike.time);
+		 			if (diff <spike.duration / 2){
+		 				value += spike.amplitude * (1 -diff / (spike.duration / 2));
+		 			}
+		 		});
+		 		return parseFloat(value.toFixed(3));
+		 	});
+		 }
+
+		 const timeLabels = Array.from({ length:50 }, (_, i) => (i * 0.02).toFixed(2));
+
+		 const emgNormalData = {
+		 	labels: timeLabels,
+		 	datasets: [{ label: 'EMG Normal', data:generateEMGData(), borderColor: 'green', fill: false, tension: 0.4}]
+		 };
+
+		 const emgMyopathyData = {
+		 	labels: timeLabels,
+		 	datasets: [{ label: 'Miopatia', data:generateEMGData(0.15, [
+		 		{time: 0.2, amplitude: 0.2, duration: 0.08},
+		 		{time:0.5, amplitude: 0.15, duration: 0.1},
+		 		{time: 0.8, amplitude: 0.25, duration: 0.09}
+		 		]), borderColor:'red', fill: false, tension: 0.4}]
+		 	};
+
+		 	const emgNeuropathyData ={
+		 		labels: timeLabels,
+		 		datasets: [{label: 'Neuropatia', data:generateEMGData(0.88, [{time: 0.3, amplitude: 0.6, duration: 0.15},
+		 			{time: 0.7,amplitude:0.55, duration:0.18}
+		 			], 30),borderColor: 'blue', fill:false, tension:0.4}]
+		 	};
+
+		 	const emgFasciculationData = {
+		 		labels: timeLabels,
+		 		datasets: [{label: 'Fasciculaciones', data:generateEMGData(0.05, [{time:0.4, amplitude:0.7, duration:0.1},{time: 0.9, amplitude:0.65, duration: 0.12}
+		 			]),borderColor: 'brown', fill:false, tension:0.4}]
+		 	};
+
+		 	const emgFibrillationData ={
+		 		labels: timeLabels,
+		 		datasets: [{label: 'Fibrilaciones', data:generateEMGData(0.2, Array.from({length:15},()=>({time:Math.random()* 1,amplitude: 0.25,duration: 0.04}))),borderColor: 'purple', fill:false, tension: 0.4}]
+		 	};
+
+		 	const emgMyotoniaData = {
+		 		labels: timeLabels,
+		 		datasets: [{label: 'Miotonia', data:generateEMGData(0.1,[{ time:0.2, amplitude: 0.5, duration: 0.3},
+		 			{time: 0.7,amplitude: 0.45, duration:0.25}
+		 			]), borderColor: 'cyan', fill: false,tension:0.4}]
+		 	};
+
+		 	const emgCarpalTunnelData = {
+		 	labels: timeLabels,
+		 	datasets: [{
+		 		label: 'Tunel Carpiano',
+		 		data: generateEMGData(0.1,
+		 		[
+		 		{time: 0.25, amplitude:0.28, duration:0.1 },
+		 		{time: 0.55, amplitude:0.32, duration:0.11 },
+		 		{time:0.85, amplitude:0.26, duration:0.99 }
+		 		],
+		 		50,
+		 		0.02
+		 		).map((value, index) => {
+		 			if (Math.random() < 0.05 && index > 10 && index < 40){
+		 				return -0.1 *Math.random();
+		 			}
+		 			return value;
+		 		}),
+		 		borderColor: 'orange',
+		 		fill: false,
+		 		tension: 0.4
+		 		}]
+		 	};
+
+		 	function createChart(ctx, data, title) {
+		 		return new Chart(ctx,{ 
+		 			type: 'line',
+		 			data: data,
+		 			options: {
+		 				responsive: true, 
+		 				maintainAspectRatio: false,
+		 				plugins:{
+		 					title: {
+		 						display:true,
+		 						text: title
+		 					}
+		 				},
+		 				scales:{
+		 					x: {
+		 						title:{
+		 							display:true,
+		 							text: 'Tiempo(s)'
+		 						}
+		 					},
+		 					y:{
+		 						title:{
+		 							display: true,
+		 							text : 'Amplitud (mV)'
+		 						}
+		 					}
+		 				},
+		 				onClick: (event, elements) => {
+		 					if (userChart === chart && elements.length > 0){ compareChart(chart.data.datasets[0].data);
+		 					}
+		 				}
+		 			}
+
+		 		});
+		 	}
+		 
+		 emgNormalChart = createChart(emgNormalChartCanvas, emgNormalData, 'EMG Normal Data');
+		 console.log("emgNormalChart:", emgNormalChart)
+		 emgMyopathyChart = createChart(emgMyopathyChartCanvas, emgMyopathyData, 'EmG con Posible Miopatia');
+
+		 emgNeuropathyChart = createChart(emgNeuropathyChartCanvas, emgNeuropathyData, 'EMG con Posible Neuropatia');
+		 emgFasciculationChart = createChart(emgFasciculationChartCanvas, emgFasciculationData, 'EMG con Posibles Fasciculaciones');
+		 emgFibrillationChart = createChart(emgFibrillationChartCanvas, emgFibrillationData, 'EMG con Posiles Firbrilaciones');
+		 emgMyotoniaChart = createChart(emgMyotoniaChartCanvas,  emgMyotoniaData, 'EMG con Posible Miotonia');
+		 emgCarpalTunnelChart = createChart(emgCarpalTunnelChartCanvas, emgCarpalTunnelData, 'EMG con Posible Tunel Carpiano')
+
+		 generateChartButton.addEventListener('click', ()=>{
+		 	const rawData = userDataInput.value.trim().split('\n');
+		 	const labels =[];
+		 	const dataPoints =[];
+		 	for (const line of rawData){
+		 		const values= line.trim().split(/\s+/);
+		 		if (values.length === 2){
+		 			const x= parseFloat(values[0]);
+		 			const y= parseFloat(values[1]);
+		 			if (!isNaN(x) && !isNaN(y)) {
+		 				labels.push(x);
+		 				dataPoints.push(y);
+		 			}else {alert('Por favor, ingresa partes de valores numericos validos(tiempo valor) seoarados por espacio o tabulacion en cada linea.');
+		 				return;}
+		 				
+		 			
+		 			}else if (line.trim() !== ""){
+		 				alert('Cada linea debe contener un par de valores(tiempo valor) separados por espacio o tabulacion.');
+		 				return;
+		 			}
+		 		}
+		 		if (labels.length > 0 && dataPoints.length > 0){
+		 			const userData = {labels: labels, datasets:[{label: 'Tu EMG', data: dataPoints, borderColor: 'blue',fill: false, tension: 0.4}] };
+		 			if(userChart) userChart.destroy();
+		 			chart =createChart(userChartCanvas,userData,'Tu EMG');
+		 			userChart = chart;
+		 			compareChart(chart.data.datasets[0].data);
+		 		}else{
+		 			alert('Por favor,ingresa algunos datos EMG para generar la grafica.');
+		 		}
+
+		 });
+
+
+		 clearDataButton.addEventListener('click', ()=> {
+		 	userDataInput.value = '';
+		 	if (userChart) {
+		 		userChart.destroy();
+		 		userChart = undefined;
+		 	}
+		 	comparisonResultDiv.textContent = '';
+		 	conditionInfoDiv.innerHTML = '';
+		 });
+
+// comparar graficas
+		 function compareChart(userData) {
+		 	const normalDiff = calculateDifference(userData, emgNormalData.datasets[0].data);
+		 	const myopathyDiff = calculateDifference(userData, emgMyopathyData.datasets[0].data);
+		 	const neuropathyDiff =calculateDifference(userData, emgNeuropathyData.datasets[0].data);
+		 	const fasciculationDiff = calculateDifference(userData, emgFasciculationData.datasets[0].data);
+		 	const fibrillationDiff = calculateDifference(userData, emgFibrillationData.datasets[0].data);
+		 	const myotoniaDiff = calculateDifference(userData, emgMyotoniaData.datasets[0].data);
+		 	const carpalTunnelDiff = calculateDifference(userData, emgCarpalTunnelData.datasets[0].data);
+
+
+
+		 	const differences = {
+		 		'EMG Normal': normalDiff,
+		 		'EMG con Posible Miopatia': myopathyDiff,
+		 		'EMG con Posible Neuropatia': neuropathyDiff,
+		 		'EMG con Posibles Fasciculaciones': fasciculationDiff,
+		 		'EMG con Posibles Fibrilaciones': fibrillationDiff,
+		 		'EMG con Posible Miotonía': myotoniaDiff,
+		 		'EMG con Posible Tunel Carpiano': carpalTunnelDiff,
+		 	};
+
+		 	let mostSimilar ='';
+		 	let minDifference = Infinity;
+		 	for (const condition in differences) {
+		 		if (differences[condition] < minDifference) {
+		 			minDifference = differences[condition];
+		 			mostSimilar = condition;
+		 		}
+		 	}
+
+		 	let diagnosis = '';
+		 	 if (mostSimilar === 'EMG con Posible Miopatía') {
+            diagnosis = `Tu señal podría sugerir **miopatía**: enfermedad primaria del músculo. **Qué lo provoca:** Genética, inflamación, enfermedades metabólicas. **Qué hacer:** Consulta a un neurólogo para EMG y pruebas musculares.`;
+        	} else if (mostSimilar === 'EMG con Posible Neuropatía') {
+            diagnosis = `Tu señal podría sugerir **neuropatía**: enfermedad de los nervios periféricos. **Qué lo provoca:** Diabetes, lesiones, infecciones, enfermedades autoinmunes. **Qué hacer:** Consulta a un neurólogo para examen y estudios de conducción nerviosa.`;
+        	} else if (mostSimilar === 'EMG con Posibles Fasciculaciones') {
+            diagnosis = `Tu señal podría mostrar **fasciculaciones**: contracciones musculares involuntarias. **Qué lo provoca:** Pueden ser benignas o asociarse a trastornos nerviosos. **Qué hacer:** Si son persistentes o con otros síntomas, consulta a un médico.`;
+        	} else if (mostSimilar === 'EMG con Posibles Fibrilaciones') {
+            diagnosis = `Tu señal podría presentar **fibrilaciones**: descargas espontáneas de fibras musculares. **Qué lo provoca:** Denervación (daño nervioso). **Qué hacer:** Consulta a un neurólogo para EMG y evaluación.`;
+        	} else if (mostSimilar === 'EMG con Posible Miotonía') {
+            diagnosis = `Tu señal podría sugerir **miotonía**: relajación muscular lenta después de la contracción. **Qué lo provoca:** Generalmente genética (distrofia miotónica, miotonía congénita). **Qué hacer:** Consulta a un neurólogo para evaluación genética y EMG.`;
+        	} else if (mostSimilar === 'EMG Normal') {
+            diagnosis = `Tu señal se asemeja a un patrón **normal** de actividad muscular. **Qué lo provoca:** Funcionamiento neuromuscular normal. **Qué hacer:** Generalmente no se requiere acción si no hay síntomas.`;
+         	} else if (mostSimilar === 'EMG con Posible Tunel Carpiano') {
+    		diagnosis = `Tu señal podría sugerir **síndrome del túnel carpiano**: compresión del nervio mediano en la muñeca. **Qué lo provoca:** Movimientos repetitivos, hinchazón, anatomía de la muñeca. **Síntomas comunes:** Entumecimiento, hormigueo, dolor y debilidad en la mano, especialmente en los dedos pulgar, índice y medio. Los síntomas a menudo empeoran por la noche. **Qué hacer:** Consulta a un médico (neurólogo o especialista en medicina física y rehabilitación) para una evaluación clínica completa y estudios de conducción nerviosa (ECN). La EMG también puede realizarse para evaluar el daño muscular. El tratamiento puede incluir fisioterapia, férulas, medicamentos y, en algunos casos, cirugía.`;
+
+        	} else  {
+            diagnosis = 'La similitud no es concluyente.';
+        	}
+
+        	comparisonResultDiv.textContent = `Al hacer clic, tu EMG se parece más a: **${mostSimilar}**.`;
+        	conditionInfoDiv.innerHTML = `<h3>Posible Interpretación:</h3><p>${diagnosis}</p> <p><b>Importante: Esto es una interpretación basada en una comparación simple y no sustituye la evaluación médica profesional.</b></p>`;
+		 }
+		 function calculateDifference(data1, data2) {
+        let difference = 0;
+        const maxLength = Math.max(data1.length, data2.length);
+        for (let i = 0; i < maxLength; i++) {
+            const val1 = data1[i] !== undefined ? data1[i] : 0;
+            const val2 = data2[i] !== undefined ? data2[i] : 0;
+            difference += Math.abs(val1 - val2);
+        }
+        return difference;
+    }
+	});
+      
+	</script>
+	<script >
+    const dropdownMenu = document.querySelector('.dropdown');
+    const dropdownContent = document.querySelector('.dropdown-content');
+    let timeoutId;
+
+    if (dropdownMenu && dropdownContent) { dropdownMenu.addEventListener('mouseenter' , () =>{clearTimeout(timeoutId); dropdownContent.style.display = 'block' ;})
+    dropdownMenu.addEventListener('mouseleave' , () => { timeoutId = setTimeout(() => {dropdownContent.style.display = 'none';}, 200);});
+    dropdownContent.addEventListener('mouseenter' , () => {clearTimeout(timeoutId);})
+    dropdownContent.addEventListener('mouseleave' , () => {timeoutId = setTimeout(() =>{ dropdownContent.style.dispaly = 'none';}, 200);});
+}
+
+</script>
+
+</body>
+</html>
